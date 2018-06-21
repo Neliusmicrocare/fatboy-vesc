@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+
+FWPATH="../"
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+
+#################### HW FatBoy HV ESC ########################
+
+COPYDIR=FATBOY_HV
+rm -f $COPYDIR/*
+
+# default
+cd $FWPATH
+touch conf_general.h
+make -j8 build_args="-DHW_VERSION_FATBOY_HV"
+cd $DIR
+cp $FWPATH/build/BLDC_4_ChibiOS.bin $COPYDIR/VESC_default.bin
+
+# default with HW limits disables
+cd $FWPATH
+touch conf_general.h
+make -j8 build_args="-DHW_VERSION_FATBOY_HV -DDISABLE_HW_LIMITS"
+cd $DIR
+cp $FWPATH/build/BLDC_4_ChibiOS.bin $COPYDIR/VESC_default_no_hw_limits.bin
+
+# ws2811
+cd $FWPATH
+touch conf_general.h
+make -j8 build_args="-DWS2811_ENABLE=1 -DHW_VERSION_FATBOY_HV"
+cd $DIR
+cp $FWPATH/build/BLDC_4_ChibiOS.bin $COPYDIR/VESC_ws2811.bin
+
+# servoout
+cd $FWPATH
+touch conf_general.h
+make -j8 build_args="-DSERVO_OUT_ENABLE=1 -DHW_VERSION_FATBOY_HV"
+cd $DIR
+cp $FWPATH/build/BLDC_4_ChibiOS.bin $COPYDIR/VESC_servoout.bin
+
+# Clean
+cd $FWPATH
+make clean
+cd $DIR
